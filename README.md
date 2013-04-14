@@ -1,6 +1,10 @@
 MultipartPostHandlerPy3K
 ========================
-A handler for urllib.request that enables multipart form uploading.
+
+About
+-----
+MultipartPostHandler is a handler for urllib.request that enables multipart/form-data POSTing. The handler is only available for Python 3.x.
+
 Example
 -------
 ```python

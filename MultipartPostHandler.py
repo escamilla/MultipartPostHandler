@@ -27,7 +27,8 @@ class MultipartPostHandler(BaseHandler):
 
 		for name, value in params:
 			data.extend(b'--' + boundary_b + CRLF_b)
-			data.extend('Content-Disposition: form-data; name="{}"'.format(name).encode() + CRLF_b)
+			data.extend('Content-Disposition: form-data; name="{}"' \
+				.format(name).encode() + CRLF_b)
 			data.extend(b'Content-Type: text/plain' + CRLF_b)
 			data.extend(CRLF_b)
 			data.extend(value.encode() + CRLF_b)
@@ -38,8 +39,8 @@ class MultipartPostHandler(BaseHandler):
 			fp.seek(0)
 
 			data.extend(b'--' + boundary_b + CRLF_b)
-			data.extend('Content-Disposition: file; name="{}"; filename="{}"'.format(
-				name, filename).encode() + CRLF_b)
+			data.extend('Content-Disposition: file; name="{}"; filename="{}"' \
+				.format(name, filename).encode() + CRLF_b)
 			data.extend('Content-Type: {}'.format(mimetype).encode() + CRLF_b)
 			data.extend(CRLF_b)
 			data.extend(fp.read() + CRLF_b)

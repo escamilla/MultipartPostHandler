@@ -1,5 +1,5 @@
 from email.generator import _make_boundary
-from io import FileIO as BUILTIN_FILE_TYPE
+from io import IOBase as BUILTIN_FILE_TYPE
 from mimetypes import guess_type
 from os.path import basename
 from urllib.parse import urlencode
@@ -21,7 +21,7 @@ class MultipartPostHandler(BaseHandler):
 
 		data = bytearray()
 
-		for name, value in fields:
+		for name, value in fields.items():
 			data.extend(b'--' + boundary_b + NEWLINE)
 			data.extend('Content-Disposition: form-data; name="{}"' \
 				.format(name).encode() + NEWLINE)
@@ -29,7 +29,7 @@ class MultipartPostHandler(BaseHandler):
 			data.extend(NEWLINE)
 			data.extend(value.encode() + NEWLINE)
 
-		for name, fp in files:
+		for name, fp in files.items():
 			filename = basename(fp.name)
 			mimetype = _get_content_type(filename)
 			fp.seek(0)
@@ -49,13 +49,13 @@ class MultipartPostHandler(BaseHandler):
 		data = req.data
 
 		if data and isinstance(data, dict):
-			fields = []
-			files = []
-			for k, v in data.items():
-				if isinstance(v, BUILTIN_FILE_TYPE):
-					files.append((k, v))
+			fields = {}
+			files = {}
+			for key, value in data.items():
+				if isinstance(value, BUILTIN_FILE_TYPE):
+					files[key] = value
 				else:
-					fields.append((k, v))
+					fields[key] = value
 
 			if not files:
 				data = urlencode(fields, doseq=True).encode()

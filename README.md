@@ -1,9 +1,9 @@
-MultipartPostHandlerPy3K
-========================
+MultipartPostHandler
+====================
 
 About
 -----
-MultipartPostHandlerPy3K is a handler for Python 3.x's urllib.request module that enables multipart/form-data POSTing.
+MultipartPostHandler is a handler for Python's urllib2 and urllib.request modules that enables multipart/form-data POSTing.
 
 Example
 -------

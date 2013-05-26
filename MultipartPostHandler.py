@@ -1,47 +1,65 @@
+#!/usr/bin/python
 from email.generator import _make_boundary
-from io import IOBase as BUILTIN_FILE_TYPE
 from mimetypes import guess_type
 from os.path import basename
-from urllib.parse import urlencode
-from urllib.request import BaseHandler
 
-__all__ = ['MultipartPostHandler']
+import sys
+PY3K = sys.version > "3"
 
-NEWLINE = b'\r\n'
+if PY3K:
+	from io import IOBase as BUILTIN_FILE_TYPE
+	from urllib.parse import urlencode
+	from urllib.request import BaseHandler
+else:
+	BUILTIN_FILE_TYPE = file
+	from urllib import urlencode
+	from urllib2 import BaseHandler
+
+__all__ = ["MultipartPostHandler"]
+
+try:
+	bytes
+except NameError:
+	bytes = str
+
+def b(str_or_bytes):
+	if not isinstance(str_or_bytes, bytes):
+		return str_or_bytes.encode("ascii")
+	else:
+		return str_or_bytes
+
+NEWLINE = b("\r\n")
 
 def _get_content_type(filename):
-	return guess_type(filename)[0] or 'application/octet-stream'
+	return guess_type(filename)[0] or "application/octet-stream"
 
 class MultipartPostHandler(BaseHandler):
 	handler_order = BaseHandler.handler_order - 10
 
 	def _encode_form_data(self, fields, files):
 		boundary = _make_boundary()
-		boundary_b = boundary.encode()
+		data = bytes()
 
-		data = bytearray()
+		for name, value in fields:
+			data += b("--") + b(boundary) + NEWLINE
+			data += b("Content-Disposition: form-data; name=\"%s\"" % name) + NEWLINE
+			data += b("Content-Type: text/plain") + NEWLINE
+			data += NEWLINE
+			data += b(value) + NEWLINE
 
-		for name, value in fields.items():
-			data.extend(b'--' + boundary_b + NEWLINE)
-			data.extend('Content-Disposition: form-data; name="{}"' \
-				.format(name).encode() + NEWLINE)
-			data.extend(b'Content-Type: text/plain' + NEWLINE)
-			data.extend(NEWLINE)
-			data.extend(value.encode() + NEWLINE)
-
-		for name, fp in files.items():
+		for name, fp in files:
 			filename = basename(fp.name)
 			mimetype = _get_content_type(filename)
 			fp.seek(0)
 
-			data.extend(b'--' + boundary_b + NEWLINE)
-			data.extend('Content-Disposition: file; name="{}"; filename="{}"' \
-				.format(name, filename).encode() + NEWLINE)
-			data.extend('Content-Type: {}'.format(mimetype).encode() + NEWLINE)
-			data.extend(NEWLINE)
-			data.extend(fp.read() + NEWLINE)
+			data += b("--") + b(boundary) + NEWLINE
+			data += b("Content-Disposition: file; name=\"%s\"; filename=\"%s\"" %
+				(name, filename)) + NEWLINE
+			data += b("Content-Type: %s" % mimetype) + NEWLINE
+			data += NEWLINE
+			data += fp.read() + NEWLINE
 
-		data.extend(b'--' + boundary_b + b'--' + NEWLINE)
+		data += b("--") + b(boundary) + b("--") + NEWLINE
 
 		return boundary, data
 
@@ -49,21 +67,21 @@ class MultipartPostHandler(BaseHandler):
 		data = req.data
 
 		if data and isinstance(data, dict):
-			fields = {}
-			files = {}
+			fields = []
+			files = []
 			for key, value in data.items():
 				if isinstance(value, BUILTIN_FILE_TYPE):
-					files[key] = value
+					files.append((key, value))
 				else:
-					fields[key] = value
+					fields.append((key, value))
 
 			if not files:
 				data = urlencode(fields, doseq=True).encode()
 			else:
 				boundary, data = self._encode_form_data(fields, files)
-				req.add_header('Content-Type',
-					'multipart/form-data; boundary="{}"'.format(boundary))
-				req.add_header('Content-Length', len(data))
+				req.add_header("Content-Type",
+					"multipart/form-data; boundary=\"%s\"" % boundary)
+				req.add_header("Content-Length", len(data))
 
 			req.data = data
 

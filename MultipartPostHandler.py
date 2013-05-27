@@ -3,6 +3,7 @@
 ####
 # 05/2013 modified by Joshua Escamilla <jescamilla@hushmail.com>
 # * added support for Python 3.x
+#
 ##
 # available at
 # https://github.com/jryane/MultipartPostHandler
@@ -53,7 +54,7 @@ def b(str_or_bytes):
 	else:
 		return str_or_bytes
 
-NEWLINE = b("\r\n")
+NEWLINE = "\r\n"
 
 def _get_content_type(filename):
 	return guess_type(filename)[0] or "application/octet-stream"

@@ -3,15 +3,18 @@ MultipartPostHandler
 
 About
 -----
-MultipartPostHandler is a handler for urllib2 and urllib.request that enables multipart form posting.
+MultipartPostHandler is a handler for Python's urllib2 and urllib.request
+modules that enables multipart form posting.
 
-This module is a modified version of the original MultipartPostHandler by Will Holcomb, which is available at https://pypi.python.org/pypi/MultipartPostHandler/. The original module has been modified primarily to add support for Python 3.x.
+This program is a modified version of Will Holcomb's MultipartPostHandler
+module, available at https://pypi.python.org/pypi/MultipartPostHandler/.
+
+The original module has been modified primarily to add support for Python 3.x.
 
 License
 -------
-Copyright 2013 Joshua Escamilla <jescamilla@hushmail.com>
-
-This program is licensed under the GNU Lesser General Public License v3. See the LICENSE file or https://www.gnu.org/licenses/lgpl.html for the full license text.
+This program is licensed under the GNU Lesser General Public License v3.
+See https://www.gnu.org/licenses/lgpl.html for the full license text.
 
 Example
 -------

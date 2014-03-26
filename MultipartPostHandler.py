@@ -15,8 +15,8 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# The latest version of this program can be found at:
-# https://github.com/jryane/MultipartPostHandler
+# The latest version of this program can always be found at:
+# https://github.com/escamilla/MultipartPostHandler
 #
 # This program is a modified version of the MultipartPostHandler module by
 # Will Holcomb <wholcomb@gmail.com>, which is available at:
